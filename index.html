@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html translate="no">
+  <head>
+    <meta charset="utf-8" />
+    <title>BubbleSwap</title>
+    <meta
+      name="description"
+      content="Swap or provide liquidity on the BubbleSwap"
+    />
+    <link rel="mask-icon" href="./favicon.png" color="#000000" />
+    <link rel="shortcut alternate icon" type="image/png" href="./favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="./favicon.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="./favicon.png" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#F6F6F6"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#141414"
+    />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="preconnect" href="https://www.google-analytics.com/" />
+
+    <style>
+      @font-face {
+        font-family: "Inter var";
+        font-style: normal;
+        font-weight: 100 900;
+        font-display: swap;
+        src: url(fonts/Inter-roman.var.woff2) format("woff2");
+        font-named-instance: Regular;
+      }
+      * {
+        font-family: "Inter var", sans-serif;
+        box-sizing: border-box;
+      }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+      }
+      button {
+        user-select: none;
+      }
+      html {
+        font-size: 16px;
+        font-variant: none;
+        font-smooth: always;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-tap-highlight-color: transparent;
+        font-feature-settings: "ss01" on, "ss02" on, "cv01" on, "cv03" on,
+          "case" on, "calt" on;
+      }
+      #background-radial-gradient {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        pointer-events: none;
+        width: 200vw;
+        height: 200vh;
+        background: radial-gradient(
+          50% 50% at 50% 50%,
+          #fc077d10 0,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: translate(-50vw, -100vh);
+        z-index: -1;
+      }
+      html {
+        min-height: 100%;
+      }
+      @media (prefers-color-scheme: dark) {
+        html {
+          background-color: #d0b5fe;
+        }
+      }
+      @media (prefers-color-scheme: light) {
+        html {
+          background-color: #f7f8fa;
+        }
+      }
+
+      .sidenav {
+        width: 130px;
+        position: fixed;
+        z-index: 1;
+        top: 104px;
+        left: 43px;
+        width: 95px;
+        height: 600px;
+        background: #ffffff;
+        border-radius: 54px;
+        opacity: 2.49;
+        overflow-x: hidden;
+        padding: 8px 0;
+      }
+
+      .sidenav a {
+        padding: 22px 8px 6px 16px;
+        text-decoration: none;
+        font-size: 14px;
+        color: #3e2098;
+        text-align: center;
+        display: block;
+      }
+      .mobileShow {
+        display: none;
+      }
+      .sidenav a:hover {
+        color: #653ddc;
+        width: 80px;
+        height: 97px;
+        background: #ffffff;
+        box-shadow: 0px 0px 20px 0px rgba(149, 158, 207, 0.5),
+          inset 1px 1px 4px 3px #cca1fa;
+        border-radius: 40px;
+        opacity: 2.49;
+        filter: blur(0px);
+      }
+
+      .main {
+        margin-left: 140px; /* Same width as the sidebar + left position in px */
+        font-size: 28px; /* Increased text to enable scrolling */
+        padding: 0px 10px;
+      }
+
+      @media screen and (max-width: 700px) {
+        .sidenav {
+          width: 20%;
+          height: auto;
+          position: fixed;
+          display: block;
+          align-items: verticla;
+        }
+        .sidenav a {
+          float: left;
+        }
+        div.content {
+          margin-left: 0;
+        }
+      }
+      @media screen and (max-height: 450px) {
+        .sidenav {
+          padding-top: 15px;
+          display: row;
+        }
+        .sidenav a {
+          font-size: 18px;
+        }
+      }
+      @media screen and (max-width: 400px) {
+        .sidevac a {
+          text-align: center;
+          float: none;
+          display: table-row;
+        }
+      }
+
+      #content-desktop {
+        display: block;
+      }
+      #content-mobile {
+        display: none;
+      }
+
+      @media screen and (max-width: 768px) {
+        #content-desktop {
+          display: none;
+        }
+        #content-mobile {
+          display: block;
+        }
+      }
+
+      .top {
+        color: #3e2098;
+        background: white;
+        border-radius: 25px;
+        font-size: 8px;
+        width: 404px;
+        padding: 10px;
+        position: fixed;
+        margin: 102px 6px 0px 0px;
+      }
+
+      .top a {
+        padding: 0px 15px 0px 29px;
+        text-decoration: none;
+        margin: 8px -31px 0px 15px;
+        font-size: 9px;
+        color: #3e2098;
+        text-align: center;
+        display: inline;
+      }
+
+      /* Boring button styles */
+      a.button {
+        /* Frame */
+        display: inline-block;
+        padding: 20px 28px;
+        border-radius: 50px;
+        box-sizing: border-box;
+
+        /* Style */
+        border: none;
+
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      a.button:active {
+        filter: brightness(75%);
+      }
+
+      /* Dropdown styles */
+      .dropdown {
+        position: relative;
+        padding: 0;
+        margin-right: 1em;
+
+        border: none;
+      }
+
+      .dropdown summary {
+        list-style: none;
+        list-style-type: none;
+      }
+
+      .dropdown > summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .dropdown summary:focus {
+        outline: none;
+      }
+
+      .dropdown summary:focus a.button {
+        border: 2px solid white;
+      }
+
+      .dropdown summary:focus {
+        outline: none;
+      }
+
+      .dropdown ul {
+        position: fixed;
+        margin: -280px 0px 0px 0px;
+        background-color: #ffffff;
+        color: #44146b;
+        padding: 14px 0;
+        width: var(--dropdown-width);
+        left: 11%;
+        margin-left: calc((var(--dropdown-width) / 2) * -1);
+        box-sizing: border-box;
+        z-index: 9;
+
+        border-radius: 12px;
+        list-style: none;
+      }
+      .dropdown ul a:hover {
+        color: #653ddc;
+        width: 80px;
+        height: 37px;
+        background: #ffffff;
+        box-shadow: 0px 0px 20px 0px rgba(149, 158, 207, 0.5),
+          inset 1px 1px 4px 3px #cca1fa;
+        border-radius: 40px;
+        opacity: 2.49;
+        filter: blur(0px);
+      }
+
+      .dropdown ul li {
+        padding: 0;
+        margin: 0;
+      }
+
+      .dropdown ul li a:link,
+      .dropdown ul li a:visited {
+        display: inline-block;
+        padding: 10px 0.8rem;
+        width: 100%;
+        text-align: left;
+        box-sizing: border-box;
+
+        color: var(--dropdown-color);
+        text-decoration: none;
+      }
+
+      /* Close the dropdown with outside clicks */
+      .dropdown > summary::before {
+        display: none;
+      }
+
+      .dropdown[open] > summary::before {
+        content: " ";
+        display: block;
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        z-index: 1;
+      }
+    </style>
+    <link href="./static/css/3.375a6057.chunk.css" rel="stylesheet" />
+    <link href="./static/css/main.003a4ec5.chunk.css" rel="stylesheet" />
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"><div>&emsp;</div></div>
+
+    <div id="content-desktop" class="sidenav">
+      <a href="/home.html"
+        ><img src="/icons/home.png" style="width: 52px; height: 52px" />Home</a
+      >
+      <a href="/index.html#/swap"
+        ><img src="/icons/swap.png" style="width: 52px; height: 52px" />Swap</a
+      >
+      <a href="/index.html#/positions">
+        <img src="/icons/liq.png" style="width: 42px; height: 42px" />
+        Liquidity</a
+      >
+      <a href="https://bubbleswapdao.netlify.app/#/1/earn/farming"
+        ><img
+          src="/icons/mining.png"
+          style="width: 42px; height: 42px"
+        />Mining</a
+      >
+      <a href="https://bubbleswapdao.netlify.app/#/1/dao/staking">
+        <img src="/icons/dao.png" style="width: 52px; height: 52px" />Stake</a
+      >
+
+      <details class="dropdown">
+        <summary role="button">
+          <a>
+            <img
+              src="/icons/more.png"
+              style="width: 52px; height: 42px"
+            />More</a
+          >
+        </summary>
+        <ul>
+          <li>
+            <a href="https://docs.bubbleswap.co/developers/contrats-address">
+              <img
+                src="/icons/contract.png"
+                style="width: 22px; height: 22px; margin: -2px 17px -7px 0px"
+              />
+              Smart Contract</a
+            >
+          </li>
+          <li>
+            <a href="https://www.certik.com/bubbleswap">
+              <img
+                src="/icons/audit.png"
+                style="width: 22px; height: 22px; margin: -2px 17px -7px 0px"
+              />
+              Audit</a
+            >
+          </li>
+          <li>
+            <a href="#">
+              <img
+                src="/icons/chart.png"
+                style="width: 22px; height: 22px; margin: -2px 17px -7px 0px"
+              />
+              Chart</a
+            >
+          </li>
+          <li>
+            <a href="https://twitter.com/bubbleswapdao">
+              <img
+                src="/icons/twitter.png"
+                style="width: 22px; height: 22px; margin: -2px 17px -7px 0px"
+              />
+              Twitter</a
+            >
+          </li>
+
+          <li>
+            <a href="https://discord.com/invite/KYThgn597y">
+              <img
+                src="/icons/discord.png"
+                style="width: 22px; height: 22px; margin: -2px 17px -7px 0px"
+              />Discord</a
+            >
+          </li>
+          <li>
+            <a href="mailto:contact@bubbleswap.co"
+              ><img
+                src="/icons/mail.png"
+                style="width: 22px; height: 22px; margin: -2px 17px -7px 0px"
+              />
+              Contact Us</a
+            >
+          </li>
+        </ul>
+      </details>
+    </div>
+
+    <div id="content-mobile" class="top">
+      <a href="home.html"
+        ><img
+          src="/icons/home.png"
+          style="width: 32px; height: 32px; margin: 0px -26px 11px 0px"
+        />Home</a
+      >
+      <a href="/index.html#/swap"
+        ><img
+          src="/icons/swap.png"
+          style="width: 32px; height: 32px; margin: 0px -26px 11px 0px"
+        />Swap</a
+      >
+      <a href="/index.html#/pool">
+        <img
+          src="/icons/liq.png"
+          style="width: 32px; height: 32px; margin: 0px -26px 11px 0px"
+        />
+        Liquidity</a
+      >
+      <a href="https://bubbleswapdao.netlify.app/#/1/earn/farming"
+        ><img
+          src="/icons/mining.png"
+          style="width: 32px; height: 32px; margin: 0px -26px 11px 0px"
+        />Mining</a
+      >
+      <a href="https://bubbleswapdao.netlify.app/#/1/dao/staking">
+        <img
+          src="/icons/dao.png"
+          style="width: 32px; height: 32px; margin: 0px -26px 11px 0px"
+        />Stake</a
+      >
+    </div>
+
+    <script>
+      !(function (e) {
+        function r(r) {
+          for (
+            var n, a, c = r[0], u = r[1], i = r[2], l = 0, d = [];
+            l < c.length;
+            l++
+          )
+            (a = c[l]),
+              Object.prototype.hasOwnProperty.call(o, a) &&
+                o[a] &&
+                d.push(o[a][0]),
+              (o[a] = 0);
+          for (n in u)
+            Object.prototype.hasOwnProperty.call(u, n) && (e[n] = u[n]);
+          for (b && b(r); d.length; ) d.shift()();
+          return f.push.apply(f, i || []), t();
+        }
+        function t() {
+          for (var e, r = 0; r < f.length; r++) {
+            for (var t = f[r], n = !0, c = 1; c < t.length; c++) {
+              var u = t[c];
+              0 !== o[u] && (n = !1);
+            }
+            n && (f.splice(r--, 1), (e = a((a.s = t[0]))));
+          }
+          return e;
+        }
+        var n = {},
+          o = { 2: 0 },
+          f = [];
+        function a(r) {
+          if (n[r]) return n[r].exports;
+          var t = (n[r] = { i: r, l: !1, exports: {} });
+          return e[r].call(t.exports, t, t.exports, a), (t.l = !0), t.exports;
+        }
+        (a.e = function (e) {
+          var r = [],
+            t = o[e];
+          if (0 !== t)
+            if (t) r.push(t[2]);
+            else {
+              var n = new Promise(function (r, n) {
+                t = o[e] = [r, n];
+              });
+              r.push((t[2] = n));
+              var f,
+                c = document.createElement("script");
+              (c.charset = "utf-8"),
+                (c.timeout = 120),
+                a.nc && c.setAttribute("nonce", a.nc),
+                (c.src = (function (e) {
+                  return (
+                    a.p +
+                    "static/js/" +
+                    ({}[e] || e) +
+                    "." +
+                    {
+                      0: "f2625637",
+                      4: "edb4f4d3",
+                      5: "dfba8cd2",
+                      6: "1eab6bee",
+                      7: "a7f610ab",
+                      8: "07fb6d56",
+                      9: "7877bc59",
+                      10: "85b2e3a1",
+                      11: "5b49efb8",
+                      12: "bc4f9bcd",
+                      13: "4b3144ff",
+                      14: "bd04b40c",
+                      15: "ddcf5863",
+                      16: "c88eee14",
+                      17: "c311f794",
+                      18: "731a09d3",
+                      19: "a8d7e1f8",
+                      20: "6187f218",
+                      21: "614a0bb6",
+                      22: "3ba55ef4",
+                      23: "160a7876",
+                      24: "7ac7c9e4",
+                      25: "8574305a",
+                      26: "e7708be5",
+                      27: "53e77293",
+                      28: "16a98ffa",
+                      29: "f33fb7b9",
+                      30: "dfe9bb35",
+                      31: "a7232c7f",
+                      32: "49155e8f",
+                      33: "0e395cc9",
+                      34: "a766a800",
+                      35: "b0d0726c",
+                      36: "20c418af",
+                      37: "ca929b78",
+                      38: "6ab659b6",
+                      39: "d8f5c9b5",
+                      40: "f4b95946",
+                      41: "f8345533",
+                      42: "48ade71e",
+                    }[e] +
+                    ".chunk.js"
+                  );
+                })(e));
+              var u = new Error();
+              f = function (r) {
+                (c.onerror = c.onload = null), clearTimeout(i);
+                var t = o[e];
+                if (0 !== t) {
+                  if (t) {
+                    var n = r && ("load" === r.type ? "missing" : r.type),
+                      f = r && r.target && r.target.src;
+                    (u.message =
+                      "Loading chunk " +
+                      e +
+                      " failed.\n(" +
+                      n +
+                      ": " +
+                      f +
+                      ")"),
+                      (u.name = "ChunkLoadError"),
+                      (u.type = n),
+                      (u.request = f),
+                      t[1](u);
+                  }
+                  o[e] = void 0;
+                }
+              };
+              var i = setTimeout(function () {
+                f({ type: "timeout", target: c });
+              }, 12e4);
+              (c.onerror = c.onload = f), document.head.appendChild(c);
+            }
+          return Promise.all(r);
+        }),
+          (a.m = e),
+          (a.c = n),
+          (a.d = function (e, r, t) {
+            a.o(e, r) ||
+              Object.defineProperty(e, r, { enumerable: !0, get: t });
+          }),
+          (a.r = function (e) {
+            "undefined" != typeof Symbol &&
+              Symbol.toStringTag &&
+              Object.defineProperty(e, Symbol.toStringTag, { value: "Module" }),
+              Object.defineProperty(e, "__esModule", { value: !0 });
+          }),
+          (a.t = function (e, r) {
+            if ((1 & r && (e = a(e)), 8 & r)) return e;
+            if (4 & r && "object" == typeof e && e && e.__esModule) return e;
+            var t = Object.create(null);
+            if (
+              (a.r(t),
+              Object.defineProperty(t, "default", { enumerable: !0, value: e }),
+              2 & r && "string" != typeof e)
+            )
+              for (var n in e)
+                a.d(
+                  t,
+                  n,
+                  function (r) {
+                    return e[r];
+                  }.bind(null, n)
+                );
+            return t;
+          }),
+          (a.n = function (e) {
+            var r =
+              e && e.__esModule
+                ? function () {
+                    return e.default;
+                  }
+                : function () {
+                    return e;
+                  };
+            return a.d(r, "a", r), r;
+          }),
+          (a.o = function (e, r) {
+            return Object.prototype.hasOwnProperty.call(e, r);
+          }),
+          (a.p = "./"),
+          (a.oe = function (e) {
+            throw (console.error(e), e);
+          });
+        var c = (this["webpackJsonp@bubbles"] =
+            this["webpackJsonp@bubbles"] || []),
+          u = c.push.bind(c);
+        (c.push = r), (c = c.slice());
+        for (var i = 0; i < c.length; i++) r(c[i]);
+        var b = u;
+        t();
+      })([]);
+    </script>
+    <script src="./static/js/3.ad6915f9.chunk.js"></script>
+    <script src="./static/js/main.f2e81d5b.chunk.js"></script>
+  </body>
+</html>
